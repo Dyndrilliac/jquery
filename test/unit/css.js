@@ -58,9 +58,9 @@ QUnit.test( "css(String|Hash)", function( assert ) {
 	jQuery( "#foo" ).css( { "opacity": "" } );
 	assert.equal( jQuery( "#foo" ).css( "opacity" ), "1", "Assert opacity is 1 when set to an empty String" );
 
-	assert.equal( jQuery( "#empty" ).css( "opacity" ), "0", "Assert opacity is accessible via filter property set in stylesheet in IE" );
+	assert.equal( jQuery( "#empty" ).css( "opacity" ), "0", "Assert opacity is accessible" );
 	jQuery( "#empty" ).css( { "opacity": "1" } );
-	assert.equal( jQuery( "#empty" ).css( "opacity" ), "1", "Assert opacity is taken from style attribute when set vs stylesheet in IE with filters" );
+	assert.equal( jQuery( "#empty" ).css( "opacity" ), "1", "Assert opacity is taken from style attribute when set" );
 
 	div = jQuery( "#nothiddendiv" );
 	child = jQuery( "#nothiddendivchild" );
@@ -141,7 +141,7 @@ QUnit.test( "css() explicit and relative values", function( assert ) {
 	$elem.css( "width", "+=9" );
 	assert.equal( $elem.css( "width" ), "10px", "'+=9' on width (params)" );
 
-	$elem.css( "width", "-=9" ) ;
+	$elem.css( "width", "-=9" );
 	assert.equal( $elem.css( "width" ), "1px", "'-=9' on width (params)" );
 
 	$elem.css( "width", "+=9px" );
@@ -354,8 +354,8 @@ QUnit.test( "css(String, Function)", function( assert ) {
 		sizes = [ "10px", "20px", "30px" ];
 
 	jQuery( "<div id='cssFunctionTest'><div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div></div>" )
+				"<div class='cssFunction'></div>" +
+				"<div class='cssFunction'></div></div>" )
 		.appendTo( "body" );
 
 	index = 0;
@@ -385,8 +385,8 @@ QUnit.test( "css(String, Function) with incoming value", function( assert ) {
 		sizes = [ "10px", "20px", "30px" ];
 
 	jQuery( "<div id='cssFunctionTest'><div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div></div>" )
+				"<div class='cssFunction'></div>" +
+				"<div class='cssFunction'></div></div>" )
 		.appendTo( "body" );
 
 	index = 0;
@@ -416,8 +416,8 @@ QUnit.test( "css(Object) where values are Functions", function( assert ) {
 		sizes = [ "10px", "20px", "30px" ];
 
 	jQuery( "<div id='cssFunctionTest'><div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div></div>" )
+				"<div class='cssFunction'></div>" +
+				"<div class='cssFunction'></div></div>" )
 		.appendTo( "body" );
 
 	index = 0;
@@ -447,8 +447,8 @@ QUnit.test( "css(Object) where values are Functions with incoming values", funct
 		sizes = [ "10px", "20px", "30px" ];
 
 	jQuery( "<div id='cssFunctionTest'><div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div>" +
-				 "<div class='cssFunction'></div></div>" )
+				"<div class='cssFunction'></div>" +
+				"<div class='cssFunction'></div></div>" )
 		.appendTo( "body" );
 
 	index = 0;
@@ -478,7 +478,7 @@ QUnit.test( "show()", function( assert ) {
 
 	assert.expect( 18 );
 
-	var hiddendiv, div, pass, old, test;
+	var hiddendiv, div, pass, test;
 		hiddendiv = jQuery( "div.hidden" );
 
 	assert.equal( jQuery.css( hiddendiv[ 0 ], "display" ), "none", "hiddendiv is display: none" );
@@ -504,12 +504,8 @@ QUnit.test( "show()", function( assert ) {
 		"<div id='show-tests'>" +
 		"<div><p><a href='#'></a></p><code></code><pre></pre><span></span></div>" +
 		"<table><thead><tr><th></th></tr></thead><tbody><tr><td></td></tr></tbody></table>" +
-		"<ul><li></li></ul></div>" +
-		"<table id='test-table'></table>"
+		"<ul><li></li></ul></div>"
 	).appendTo( "#qunit-fixture" ).find( "*" ).css( "display", "none" );
-
-	old = jQuery( "#test-table" ).show().css( "display" ) !== "table";
-	jQuery( "#test-table" ).remove();
 
 	test = {
 		"div": "block",
@@ -518,14 +514,14 @@ QUnit.test( "show()", function( assert ) {
 		"code": "inline",
 		"pre": "block",
 		"span": "inline",
-		"table": old ? "block" : "table",
-		"thead": old ? "block" : "table-header-group",
-		"tbody": old ? "block" : "table-row-group",
-		"tr": old ? "block" : "table-row",
-		"th": old ? "block" : "table-cell",
-		"td": old ? "block" : "table-cell",
+		"table": "table",
+		"thead": "table-header-group",
+		"tbody": "table-row-group",
+		"tr": "table-row",
+		"th": "table-cell",
+		"td": "table-cell",
 		"ul": "block",
-		"li": old ? "block" : "list-item"
+		"li": "list-item"
 	};
 
 	jQuery.each( test, function( selector, expected ) {
@@ -930,6 +926,30 @@ QUnit[ jQuery.find.compile && jQuery.fn.toggle ? "test" : "skip" ]( "toggle()", 
 	jQuery.fn.hide = oldHide;
 } );
 
+QUnit[ jQuery.find.compile && jQuery.fn.toggle ? "test" : "skip" ]( "detached toggle()", function( assert ) {
+	assert.expect( 6 );
+	var detached = jQuery( "<p><a/><p>" ).find( "*" ).addBack(),
+		hiddenDetached = jQuery( "<p><a/></p>" ).find( "*" ).addBack().css( "display", "none" ),
+		cascadeHiddenDetached = jQuery( "<p><a/></p>" ).find( "*" ).addBack().addClass( "hidden" );
+
+	detached.toggle();
+	detached.appendTo( "#qunit-fixture" );
+	assert.equal( detached[ 0 ].style.display, "none", "detached element" );
+	assert.equal( detached[ 1 ].style.display, "none", "element in detached tree" );
+
+	hiddenDetached.toggle();
+	hiddenDetached.appendTo( "#qunit-fixture" );
+	assert.equal( hiddenDetached[ 0 ].style.display, "", "detached, hidden element" );
+	assert.equal( hiddenDetached[ 1 ].style.display, "", "hidden element in detached tree" );
+
+	cascadeHiddenDetached.toggle();
+	cascadeHiddenDetached.appendTo( "#qunit-fixture" );
+	assert.equal( cascadeHiddenDetached[ 0 ].style.display, "none",
+		"detached, cascade-hidden element" );
+	assert.equal( cascadeHiddenDetached[ 1 ].style.display, "none",
+		"cascade-hidden element in detached tree" );
+} );
+
 QUnit.test( "jQuery.css(elem, 'height') doesn't clear radio buttons (bug #1095)", function( assert ) {
 	assert.expect( 4 );
 
@@ -968,18 +988,18 @@ QUnit.test( "computed margins (trac-3333; gh-2237)", function( assert ) {
 	assert.equal( $div.css( "marginRight" ), "0px",
 		"marginRight correctly calculated with a width and display block" );
 
-	$div.css({
+	$div.css( {
 		position: "absolute",
 		top: 0,
 		left: 0,
 		width: "100px"
-	});
-	$child.css({
+	} );
+	$child.css( {
 		width: "50px",
 		margin: "auto"
-	});
+	} );
 	assert.equal( $child.css( "marginLeft" ), "25px", "auto margins are computed to pixels" );
-});
+} );
 
 QUnit.test( "box model properties incorrectly returning % instead of px, see #10639 and #12088", function( assert ) {
 	assert.expect( 2 );
@@ -1119,10 +1139,10 @@ QUnit.test( "css('width') and css('height') should respect box-sizing, see #1100
 	assert.equal( el_dis.css( "height" ), el_dis.css( "height", el_dis.css( "height" ) ).css( "height" ), "css('height') is not respecting box-sizing for disconnected element, see #11004" );
 } );
 
-testIframeWithCallback(
+testIframe(
 	"css('width') should work correctly before document ready (#14084)",
 	"css/cssWidthBeforeDocReady.html",
-	function( cssWidthBeforeDocReady, assert ) {
+	function( assert, jQuery, window, document, cssWidthBeforeDocReady ) {
 		assert.expect( 1 );
 		assert.strictEqual( cssWidthBeforeDocReady, "100px", "elem.css('width') works correctly before document ready" );
 	}
@@ -1234,23 +1254,21 @@ QUnit.test( "cssHooks - expand", function( assert ) {
 } );
 
 QUnit.test( "css opacity consistency across browsers (#12685)", function( assert ) {
-	assert.expect( 4 );
+	assert.expect( 3 );
 
 	var el,
 		fixture = jQuery( "#qunit-fixture" );
 
 	// Append style element
-	jQuery( "<style>.opacityWithSpaces_t12685 { opacity: 0.1; filter: alpha(opacity = 10); } .opacityNoSpaces_t12685 { opacity: 0.2; filter: alpha(opacity=20); }</style>" ).appendTo( fixture );
+	jQuery( "<style>.opacity_t12685 { opacity: 0.1; }</style>" ).appendTo( fixture );
 
-	el = jQuery( "<div class='opacityWithSpaces_t12685'></div>" ).appendTo( fixture );
+	el = jQuery( "<div class='opacity_t12685'></div>" ).appendTo( fixture );
 
-	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 10, "opacity from style sheet (filter:alpha with spaces)" );
-	el.removeClass( "opacityWithSpaces_t12685" ).addClass( "opacityNoSpaces_t12685" );
-	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 20, "opacity from style sheet (filter:alpha without spaces)" );
+	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 10, "opacity from style sheet" );
 	el.css( "opacity", 0.3 );
 	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 30, "override opacity" );
 	el.css( "opacity", "" );
-	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 20, "remove opacity override" );
+	assert.equal( Math.round( el.css( "opacity" ) * 100 ), 10, "remove opacity override" );
 } );
 
 QUnit[ jQuery.find.compile ? "test" : "skip" ]( ":visible/:hidden selectors", function( assert ) {
@@ -1291,7 +1309,7 @@ QUnit[ jQuery.find.compile ? "test" : "skip" ]( ":visible/:hidden selectors", fu
 
 	assert.t( "Is Visible", "#qunit-fixture div:visible:lt(2)", [ "foo", "nothiddendiv" ] );
 	assert.t( "Is Not Hidden", "#qunit-fixture:hidden", [] );
-	assert.t( "Is Hidden", "#form input:hidden", [ "hidden1","hidden2" ] );
+	assert.t( "Is Hidden", "#form input:hidden", [ "hidden1", "hidden2" ] );
 
 	$a = jQuery( "<a href='#'><h1>Header</h1></a>" ).appendTo( "#qunit-fixture" );
 	assert.ok( $a.is( ":visible" ), "Anchor tag with flow content is visible (gh-2227)" );
@@ -1304,7 +1322,16 @@ QUnit.test( "Keep the last style if the new one isn't recognized by the browser 
 	el = jQuery( "<div></div>" ).css( "position", "absolute" ).css( "position", "fake value" );
 	assert.equal( el.css( "position" ), "absolute", "The old style is kept when setting an unrecognized value" );
 	el = jQuery( "<div></div>" ).css( "position", "absolute" ).css( "position", " " );
-	assert.equal( el.css( "position" ), "absolute", "The old style is kept when setting to a space" );
+
+	// Support: Edge 14
+	// Edge collapses whitespace-only values when setting a style property and
+	// there is no easy way for us to work around it. Just skip the test there
+	// and hope for the better future.
+	if ( /edge\//i.test( navigator.userAgent ) ) {
+		assert.ok( true, "Skipped (Edge 14 handles whitespace-only values incorrectly)" );
+	} else {
+		assert.equal( el.css( "position" ), "absolute", "The old style is kept when setting to a space" );
+	}
 } );
 
 QUnit.test( "Reset the style if set to an empty string", function( assert ) {
@@ -1327,7 +1354,7 @@ QUnit.test(
 				name: "backgroundAttachment",
 				value: [ "fixed" ],
 				expected: [ "scroll" ]
-			},{
+			}, {
 				name: "backgroundColor",
 				value: [ "rgb(255, 0, 0)", "rgb(255,0,0)", "#ff0000" ],
 				expected: [ "transparent" ]
@@ -1404,7 +1431,7 @@ QUnit.test(
 	}
 );
 
-// Support: IE < 11
+// Support: IE <=10 only
 // We have to jump through the hoops here in order to test work with "order" CSS property,
 // that some browsers do not support. This test is not, strictly speaking, correct,
 // but it's the best that we can do.

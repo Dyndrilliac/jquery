@@ -14,7 +14,7 @@ QUnit.test( "bind/unbind", function( assert ) {
 			assert.equal( e.type, "click", "correct event type" );
 			assert.equal( e.data.bindData, 19, "correct trigger data" );
 			assert.equal( trig, 42, "correct bind data" );
-			assert.equal( e.target.nodeName.toLowerCase(), "b" , "correct element" );
+			assert.equal( e.target.nodeName.toLowerCase(), "b", "correct element" );
 		} )
 		.trigger( "click", [ 42 ] )
 		.unbind( "click" )
@@ -32,7 +32,7 @@ QUnit.test( "delegate/undelegate", function( assert ) {
 	markup
 		.delegate( "b", "click", function( e ) {
 			assert.equal( e.type, "click", "correct event type" );
-			assert.equal( e.target.nodeName.toLowerCase(), "b" , "correct element" );
+			assert.equal( e.target.nodeName.toLowerCase(), "b", "correct element" );
 		} )
 		.find( "b" )
 			.trigger( "click" )
@@ -83,7 +83,7 @@ QUnit.test( "jQuery.parseJSON", function( assert ) {
 	assert.throws( function() {
 		var result = jQuery.parseJSON( "0101" );
 
-		// Support: IE9+
+		// Support: IE <=9 only
 		// Ensure base-10 interpretation on browsers that erroneously accept leading-zero numbers
 		if ( result === 101 ) {
 			throw new Error( "close enough" );
